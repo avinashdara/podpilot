@@ -25,24 +25,15 @@ if index_name not in pc.list_indexes().names():
         }
     )
 
-# Get the index
-index = pc.Index(index_name)
 print("✅ Pinecone setup complete.")
 
 embedding_model = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
-
-# Convert Pinecone V3 index to format expected by LangChain
-from pinecone.grpc import PineconeGRPC
-index_grpc = PineconeGRPC(
-    api_key=os.getenv("PINECONE_API_KEY"),
-    environment=os.getenv("PINECONE_ENV")
-)
 
 vectorstore = LangchainPinecone.from_existing_index(
     index_name=index_name,
     embedding=embedding_model,
     text_key="text",
-    pinecone_client=index_grpc
+    namespace=""  # Use default namespace
 )
 
 def store_report(report_text, week_id):
