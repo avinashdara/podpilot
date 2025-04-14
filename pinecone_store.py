@@ -22,8 +22,8 @@ pc.create_index(
     metric="cosine",
     spec={
         "serverless": {
-            "cloud": "aws",
-            "region": "us-west-2"
+            "cloud": "gcp",
+            "region": "us-central1"  # Free tier region
         }
     }
 )
