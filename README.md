@@ -5,17 +5,17 @@ A Streamlit application that allows users to upload podcast transcripts (in TXT,
 ## Features
 
 - Support for multiple file formats (TXT, PDF, SRT)
-- Semantic search using FAISS and Sentence Transformers
+- Semantic search using FAISS and OpenAI Embeddings
 - Context-aware responses using OpenAI's GPT-4
 - Interactive transcript chunk viewer
 - Detailed answer generation with relevant quotes
 
-## Installation
+## Setup
 
 1. Clone the repository:
 ```bash
 git clone <your-repository-url>
-cd <repository-name>
+cd podcast-transcript-qa
 ```
 
 2. Create a virtual environment and activate it:
@@ -30,21 +30,10 @@ pip install -r requirements.txt
 ```
 
 4. Set up environment variables:
-```bash
-# Copy the template environment file
-cp .env.template .env
-
-# Edit .env file with your actual API key
-# IMPORTANT: Never commit your .env file to version control!
+Create a `.env` file in the project root and add your OpenAI API key:
 ```
-
-Then edit the `.env` file and replace `your_openai_api_key_here` with your actual OpenAI API key.
-
-⚠️ **IMPORTANT: Security Notes**
-- Never commit your `.env` file to version control
-- Never share your API keys publicly
-- The `.env` file is already in `.gitignore` to prevent accidental commits
-- If you accidentally commit API keys, rotate them immediately
+OPENAI_API_KEY=your-api-key-here
+```
 
 ## Usage
 
@@ -59,32 +48,23 @@ streamlit run app.py
 
 4. Ask questions about the podcast content in the text input field
 
-## Deployment on Streamlit Cloud
-
-1. Push your code to GitHub (make sure your `.env` file is not included)
-2. Go to [Streamlit Cloud](https://streamlit.io/cloud)
-3. Connect your GitHub repository
-4. Add your OpenAI API key as a secret in the Streamlit Cloud dashboard:
-   - Go to your app settings
-   - Add a secret with the key `OPENAI_API_KEY`
-   - Set its value to your API key
-
 ## How it Works
 
 1. **File Processing**: The app reads and processes the uploaded transcript file, cleaning and formatting the content as needed.
 
-2. **Chunking**: The transcript is split into manageable chunks while preserving sentence integrity.
+2. **Chunking**: The transcript is split into manageable chunks while preserving context using RecursiveCharacterTextSplitter.
 
-3. **Semantic Search**: When a question is asked, the app uses FAISS and Sentence Transformers to find the most relevant chunks of the transcript.
+3. **Semantic Search**: When a question is asked, the app uses FAISS and OpenAI Embeddings to find the most relevant chunks of the transcript.
 
 4. **Response Generation**: The relevant chunks are sent to OpenAI's GPT-4 along with the question to generate a comprehensive answer.
 
-## Requirements
+## Deployment
 
-- Python 3.8+
-- OpenAI API key
-- See requirements.txt for full list of dependencies
+The app can be deployed on Streamlit Cloud:
+1. Push your code to GitHub
+2. Connect your repository to Streamlit Cloud
+3. Add your OpenAI API key to Streamlit Cloud secrets
 
-## License
+## Security Note
 
-MIT License 
+Make sure to never commit your `.env` file or expose your OpenAI API key in the code. 
