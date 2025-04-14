@@ -1,8 +1,8 @@
 from pinecone import Pinecone
 from dotenv import load_dotenv
 import os
-from langchain.embeddings.openai import OpenAIEmbeddings
-from langchain.vectorstores import Pinecone as LangchainPinecone
+from langchain_community.embeddings.openai import OpenAIEmbeddings
+from langchain_community.vectorstores import Pinecone as LangchainPinecone
 
 load_dotenv()
 
