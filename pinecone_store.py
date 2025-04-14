@@ -11,19 +11,22 @@ pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
 index_name = "competitor-analysis"
 
-# Create index if it doesn't exist
-if index_name not in pc.list_indexes().names():
-    pc.create_index(
-        name=index_name,
-        dimension=1536,
-        metric="cosine",
-        spec={
-            "serverless": {
-                "cloud": "aws",
-                "region": "us-west-2"
-            }
+# First, delete the existing index if it exists (since we can't modify dimensions)
+if index_name in pc.list_indexes().names():
+    pc.delete_index(index_name)
+
+# Create index with correct dimensions for OpenAI ada-002 model (1536)
+pc.create_index(
+    name=index_name,
+    dimension=1536,  # OpenAI ada-002 embedding dimension
+    metric="cosine",
+    spec={
+        "serverless": {
+            "cloud": "aws",
+            "region": "us-west-2"
         }
-    )
+    }
+)
 
 print("✅ Pinecone setup complete.")
 
