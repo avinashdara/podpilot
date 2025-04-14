@@ -1,4 +1,4 @@
-import pinecone
+from pinecone import Pinecone
 from dotenv import load_dotenv
 import os
 from langchain_community.embeddings.openai import OpenAIEmbeddings
@@ -6,32 +6,43 @@ from langchain_community.vectorstores import Pinecone as LangchainPinecone
 
 load_dotenv()
 
-# Initialize Pinecone
-pinecone.init(
-    api_key=os.getenv("PINECONE_API_KEY"),
-    environment=os.getenv("PINECONE_ENV")
-)
+# Initialize Pinecone with V3 API
+pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
 
 index_name = "competitor-analysis"
 
 # Create index if it doesn't exist
-if index_name not in pinecone.list_indexes():
-    pinecone.create_index(
+if index_name not in pc.list_indexes().names():
+    pc.create_index(
         name=index_name,
         dimension=1536,
-        metric="cosine"
+        metric="cosine",
+        spec={
+            "serverless": {
+                "cloud": "aws",
+                "region": "us-west-2"
+            }
+        }
     )
 
 # Get the index
-index = pinecone.Index(index_name)
+index = pc.Index(index_name)
 print("✅ Pinecone setup complete.")
 
 embedding_model = OpenAIEmbeddings(openai_api_key=os.getenv("OPENAI_API_KEY"))
 
+# Convert Pinecone V3 index to format expected by LangChain
+from pinecone.grpc import PineconeGRPC
+index_grpc = PineconeGRPC(
+    api_key=os.getenv("PINECONE_API_KEY"),
+    environment=os.getenv("PINECONE_ENV")
+)
+
 vectorstore = LangchainPinecone.from_existing_index(
     index_name=index_name,
     embedding=embedding_model,
-    text_key="text"
+    text_key="text",
+    pinecone_client=index_grpc
 )
 
 def store_report(report_text, week_id):
